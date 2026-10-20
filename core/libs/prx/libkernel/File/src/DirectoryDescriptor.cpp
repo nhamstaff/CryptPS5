@@ -105,7 +105,10 @@ std::optional<std::int64_t> SeekDirectoryDescriptor(int fd, std::int64_t offset,
     if (!found) return std::nullopt;
     auto& state = *found;
     std::lock_guard lock(state.mutex);
-    if (whence != SeekSet && whence != SeekCurrent) NotImplemented_nid_no_patch("lseek from the end of a directory descriptor");
+    if (whence != SeekSet && whence != SeekCurrent) {
+        errno = EINVAL;
+        return std::int64_t{-1};
+    }
     const auto cursor = static_cast<std::int64_t>(state.cursor);
     if (whence == SeekCurrent && offset == 0) return cursor;
     if (whence == SeekCurrent && offset > std::numeric_limits<std::int64_t>::max() - cursor) {

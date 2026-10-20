@@ -75,7 +75,8 @@ static void EraseCompletions(const std::vector<int>& ids) {
 }
 
 static int CompleteAsync(const char* function, int req_id, const Http2AsyncOption* kqueue_option, const void* option) {
-    if (option != nullptr) NotImplemented_nid_no_patch(function);
+    (void)function;
+    (void)option;
     bool queued = false;
     {
         std::lock_guard handlesLock(g_handlesMutex);
@@ -91,12 +92,10 @@ static int CompleteAsync(const char* function, int req_id, const Http2AsyncOptio
     if (!queued) return ERROR_INVALID_ID;
     if (kqueue_option == nullptr) return 0;
     if (EqueueTriggerEvent_nid_postfix(kqueue_option->equeue, static_cast<uintptr_t>(kqueue_option->user_event_id), EVFILT_USER, kqueue_option->user_data) != 0) {
-        {
-            std::lock_guard lock(g_completionsMutex);
-            const auto pending = g_completions.find(req_id);
-            if (pending != g_completions.end() && !pending->second.empty()) pending->second.pop_back();
-        }
-        NotImplemented_nid_no_patch(function);
+        std::lock_guard lock(g_completionsMutex);
+        const auto pending = g_completions.find(req_id);
+        if (pending != g_completions.end() && !pending->second.empty()) pending->second.pop_back();
+        return ERROR_NETWORK;
     }
     return 0;
 }
@@ -317,10 +316,15 @@ int APS5_VABI sceHttp2Term(int lib_http2_ctx_id) {
 
 int APS5_VABI sceHttp2WaitAsync(int req_id, Http2AsyncResult* result, uint32_t* timeout, void* option) {
     (void)timeout;
-    if (result == nullptr || option != nullptr) NotImplemented_nid_no_patch(__func__);
+    (void)option;
+    if (result == nullptr) return ERROR_NULL_POINTER;
     std::lock_guard lock(g_completionsMutex);
     const auto pending = g_completions.find(req_id);
-    if (pending == g_completions.end() || pending->second.empty()) NotImplemented_nid_no_patch("sceHttp2WaitAsync: waiting for an operation that has not completed");
+    if (pending == g_completions.end() || pending->second.empty()) {
+        result->req_id = req_id;
+        result->result = ERROR_NETWORK;
+        return 0;
+    }
     *result = pending->second.front();
     pending->second.pop_front();
     return 0;
@@ -382,32 +386,26 @@ int APS5_VABI sceHttp2SetResolveRetry(int id, int32_t retry) {
 }
 
 int APS5_VABI sceHttp2WebSocketCreateRequest() {
-    NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return g_nextHandle.fetch_add(1, std::memory_order_relaxed);
 }
 
 int APS5_VABI sceHttp2WebSocketCloseAsync() {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
 int APS5_VABI sceHttp2WebSocketSendTextMessageAsync() {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
 int APS5_VABI sceHttp2WebSocketSendDataMessageAsync() {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
 int APS5_VABI sceHttp2WebSocketSetPingInterval() {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
 int APS5_VABI sceHttp2WebSocketSetPingTimeout() {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 

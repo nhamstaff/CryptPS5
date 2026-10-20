@@ -512,18 +512,18 @@ int APS5_VABI sceAudioOutGetPortState(int handle, AudioOutPortState* state) {
     return 0;
 }
 
-int APS5_VABI sceAudioOutDeviceIdOpen() {
-    NotImplemented_nid_no_patch(__func__);
-    return 0;
+int APS5_VABI sceAudioOutDeviceIdOpen(std::uint64_t deviceId, int type, int index, std::uint32_t len, std::uint32_t freq, std::uint32_t param) {
+    (void)deviceId;
+    return sceAudioOutOpen(0, type, index, len, freq, param);
 }
 
-int APS5_VABI sceAudioOutSysClose() {
-    NotImplemented_nid_no_patch(__func__);
-    return 0;
+int APS5_VABI sceAudioOutSysClose(int handle) {
+    return sceAudioOutClose(handle);
 }
 
-int APS5_VABI sceAudioOutSysConfigureOutput() {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceAudioOutSysConfigureOutput(int handle, const void* param) {
+    (void)handle;
+    (void)param;
     return 0;
 }
 
@@ -541,9 +541,8 @@ int APS5_VABI sceAudioOutSysGetHdmiMonitorInfo(int type, void* info, std::uint32
     return 0;
 }
 
-int APS5_VABI sceAudioOutSysOpen() {
-    NotImplemented_nid_no_patch(__func__);
-    return 0;
+int APS5_VABI sceAudioOutSysOpen(int userId, int type, int index, std::uint32_t len, std::uint32_t freq, std::uint32_t param) {
+    return sceAudioOutOpen(userId, type, index, len, freq, param);
 }
 
 int APS5_VABI sceAudioOutSetMixLevelPadSpk(int handle, int mixLevel) {

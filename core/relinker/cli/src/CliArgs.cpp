@@ -11,7 +11,7 @@
 namespace Cli {
 
 const char* Usage() {
-    return "Usage: relinker [--help] [--windows | --macos] [--windows-diagnostics] [--windows-gui] [--trace-imports] [--windows-fixed-base <address>] [--linux-fixed-base <address>] [--skip-syscall-check | --trap-sdk-syscall-stubs] [--skip-sce-module | --sce-module-path <path>] [--exclude-sce-module <file>]... [--module-dir <dir>]... [--executable <path>]... [--to-intel] [--to-rosetta] [unused-filter=0|1|2] [--registry] [--rpath <path>] [--lazy-binding] [--autorun] <input.elf> <output.elf>\n"
+    return "Usage: relinker [--help] [--windows | --macos] [--windows-diagnostics] [--windows-gui] [--trace-imports] [--windows-fixed-base <address>] [--windows-dynamic-base] [--linux-fixed-base <address>] [--skip-syscall-check | --trap-sdk-syscall-stubs] [--skip-sce-module | --sce-module-path <path>] [--exclude-sce-module <file>]... [--module-dir <dir>]... [--executable <path>]... [--to-intel] [--to-rosetta] [unused-filter=0|1|2] [--registry] [--rpath <path>] [--lazy-binding] [--autorun] <input.elf> <output.elf>\n"
            "Example: relinker input.elf output.elf";
 }
 
@@ -105,6 +105,8 @@ Args ParseArgs(int argc, char* argv[]) {
             args.windowsDiagnostics = true;
         } else if (arg == "--windows-gui") {
             args.windowsGui = true;
+        } else if (arg == "--windows-dynamic-base") {
+            args.windowsDynamicBase = true;
         } else if (arg == "--trace-imports") {
             args.traceImports = true;
         } else if (arg.rfind("--", 0) == 0 || arg == "unused-filter") {
@@ -145,6 +147,10 @@ Args ParseArgs(int argc, char* argv[]) {
 
     if (args.windowsFixedBase && !args.toWindows)
         throw std::runtime_error("--windows-fixed-base requires --windows");
+    if (args.windowsDynamicBase && !args.toWindows)
+        throw std::runtime_error("--windows-dynamic-base requires --windows");
+    if (args.windowsDynamicBase && args.windowsFixedBase)
+        throw std::runtime_error("--windows-dynamic-base conflicts with --windows-fixed-base");
     if (args.traceImports && !args.toWindows)
         throw std::runtime_error("--trace-imports requires --windows");
     if (args.traceImports && args.lazyBinding)

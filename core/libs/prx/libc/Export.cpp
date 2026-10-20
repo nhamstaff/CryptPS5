@@ -18,11 +18,8 @@ extern "C" {
         LibcHeapTraceInfo_nid_no_patch(info);
     }
 
-// Dead import of Cyberpunk 2077 (PPSA04029): no call sites, but the
-// Windows loader resolves imports strictly, so it must be present.
 int APS5_VABI _ZSt14_Atomic_assertPKcS0__nid_postfix() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+    return 0;
 }
 
 

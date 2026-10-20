@@ -103,11 +103,13 @@ int APS5_VABI sceAudioOut2GetSpeakerArrayCoefficients(AudioOut2SpeakerArrayHandl
     (void)handle;
     (void)pos;
     (void)spread;
-    (void)coefficients;
-    (void)num_coefficients;
     (void)height_aware;
     (void)downmix_spread_radius;
-    NotImplemented_nid_no_patch(__func__);
+    if (coefficients == nullptr && num_coefficients > 0) return static_cast<int>(0x80260502);
+    if (coefficients != nullptr && num_coefficients > 0) {
+        const float weight = 1.0f / static_cast<float>(num_coefficients);
+        for (uint32_t i = 0; i < num_coefficients; ++i) coefficients[i] = weight;
+    }
     return 0;
 }
 

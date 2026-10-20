@@ -28,7 +28,7 @@ void writeGotStub(std::vector<PeSection>& sections, const std::uint32_t targetRv
 
 }
 
-WindowsPePatcher::WindowsPePatcher(const bool windowsGui, std::optional<std::vector<std::uint8_t>> icon, std::filesystem::path iconName, std::function<void(std::uint64_t, std::uint64_t)> progress, const std::optional<std::uint64_t> fixedBase, const bool traceImports) : progress(std::move(progress)), windowsGui(windowsGui), icon(std::move(icon)), iconName(std::move(iconName)), fixedBase(fixedBase), traceImports(traceImports) {
+WindowsPePatcher::WindowsPePatcher(const bool windowsGui, std::optional<std::vector<std::uint8_t>> icon, std::filesystem::path iconName, std::function<void(std::uint64_t, std::uint64_t)> progress, const std::optional<std::uint64_t> fixedBase, const bool traceImports, const bool dynamicBase) : progress(std::move(progress)), windowsGui(windowsGui), icon(std::move(icon)), iconName(std::move(iconName)), fixedBase(fixedBase), traceImports(traceImports), dynamicBase(dynamicBase) {
     if (fixedBase && (*fixedBase < 0x20000 || *fixedBase > 0x7fffffff0000 || (*fixedBase & 0xffff) != 0))
         throw Domain::RelinkerException("Invalid fixed Windows guest image base");
 }
@@ -110,7 +110,7 @@ std::vector<std::uint8_t> WindowsPePatcher::Patch(std::vector<std::uint8_t> sour
     }
     directories[2] = icon ? WindowsIconResourceBuilder().Build(*icon, iconName, sections, nextRva) : PeDirectory{};
     report(9500);
-    auto result = WindowsPeWriter().Write(sections, entryRva, directories, windowsGui, fixedBase ? std::optional<std::uint64_t>(image.GetImageBase()) : std::nullopt, false);
+    auto result = WindowsPeWriter().Write(sections, entryRva, directories, windowsGui, fixedBase ? std::optional<std::uint64_t>(image.GetImageBase()) : std::nullopt, dynamicBase);
     report(10000);
     return result;
 }

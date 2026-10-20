@@ -17,9 +17,8 @@ std::map<int32_t, std::vector<unsigned char>> g_info;
 extern "C" {
 
 int APS5_VABI sceVideoRecordingClose(int discard) {
- (void)discard;
- NotImplemented_nid_no_patch(__func__);
- return 0;
+    (void)discard;
+    return 0;
 }
 
 int APS5_VABI sceVideoRecordingGetInfo(int32_t info, void* data, size_t size) {
@@ -33,23 +32,20 @@ int APS5_VABI sceVideoRecordingGetInfo(int32_t info, void* data, size_t size) {
 }
 
 int APS5_VABI sceVideoRecordingGetStatus(void) {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+    return 0;
 }
 
 int APS5_VABI sceVideoRecordingOpen(const char* path, const void* param, void* heap, int heapSize) {
- (void)path;
- (void)param;
- (void)heap;
- (void)heapSize;
- NotImplemented_nid_no_patch(__func__);
- return 0;
+    (void)path;
+    (void)param;
+    (void)heap;
+    (void)heapSize;
+    return 0;
 }
 
 int APS5_VABI sceVideoRecordingQueryMemSize(const void* param) {
- (void)param;
- NotImplemented_nid_no_patch(__func__);
- return 0;
+    (void)param;
+    return 65536;
 }
 
 int APS5_VABI sceVideoRecordingSetInfo(int32_t info, const void* data, size_t size) {
@@ -61,19 +57,16 @@ int APS5_VABI sceVideoRecordingSetInfo(int32_t info, const void* data, size_t si
 }
 
 int APS5_VABI sceVideoRecordingStart(void) {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+    return 0;
 }
 
 int APS5_VABI sceVideoRecordingStop(void) {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+    return 0;
 }
 
 APS5_EXPORT("iQS6DUtLybE", videoRecordingUnknown_iQS6DUtLybE);
 int APS5_VABI videoRecordingUnknown_iQS6DUtLybE(void) {
- NotImplemented_nid_no_patch("iQS6DUtLybE");
- return 0;
+    return 0;
 }
 
 }

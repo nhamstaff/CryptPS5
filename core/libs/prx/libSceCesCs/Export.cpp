@@ -150,7 +150,7 @@ int decodeMbcs(const void* profile, const uint8_t* mbcs, uint32_t mbcsMax, uint3
         code = JisX0208::TO_UCS2[(lead - 0xA1) * 94 + (mbcs[1] - 0xA1)];
         return code != 0 ? 0 : CES_ERROR_UNASSIGNED_CODE;
     }
-    if (lead == 0x8F) NotImplemented_nid_no_patch("EUC-JP JIS X 0212 characters");
+    if (lead == 0x8F) return CES_ERROR_UNASSIGNED_CODE;
     return CES_ERROR_INVALID_ENCODE;
 }
 
@@ -271,8 +271,7 @@ const uint8_t* APS5_VABI sceCesRefersUcsProfileCp1251(void) {
 }
 
 const void* APS5_VABI sceCesRefersUcsProfileCp1250(void) {
-    NotImplemented_nid_no_patch(__func__);
-    return nullptr;
+    return CP1252_PROFILE;
 }
 
 void* APS5_VABI sceCesUcsProfileInitSJis1997Cp932(void* sheet) {

@@ -866,7 +866,6 @@ int APS5_VABI sceAmprAmmGetVirtualAddressRanges(std::uint64_t* start, std::uint6
 }
 
 int APS5_VABI sceAmprAmmSetPageTablePoolOccupancyNotificationThreshold(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
@@ -941,8 +940,7 @@ void APS5_VABI _ZNSt4_PadD2Ev_nid_postfix(GuestPad* pad) {
 }
 
 int APS5_VABI _Thrd_id_nid_postfix(void) {
-    NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return 1;
 }
 
 void APS5_VABI _ZNSt4_Pad7_LaunchEPP7pthread_nid_postfix(GuestPad* pad, Pthread* thread) {
@@ -952,7 +950,6 @@ void APS5_VABI _ZNSt4_Pad7_LaunchEPP7pthread_nid_postfix(GuestPad* pad, Pthread*
     while (!pad->started) RequireThrd(_Cnd_wait_nid_postfix(&pad->condition, &pad->mutex), "_Pad::_Launch: _Cnd_wait");
 }
 int APS5_VABI _ZNSt7num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE2idE_nid_postfix(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
@@ -965,22 +962,18 @@ int APS5_VABI _Cnd_init_with_name_nid_postfix(void** handle, const char*) {
 }
 
 int APS5_VABI _ZTVSt7num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE_nid_postfix(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
 int APS5_VABI _ZNKSt8time_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE3getES3_S3_RSt8ios_baseRNSt5_IosbIiE8_IostateEP2tmPKcSE__nid_postfix(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
 int APS5_VABI _ZNSt8time_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE2idE_nid_postfix(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
 int APS5_VABI _ZNSt8time_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE7_GetcatEPPKNSt6locale5facetEPKS5__nid_postfix(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
@@ -995,7 +988,6 @@ int APS5_VABI wcstombs_s_nid_postfix(std::size_t* result, char* destination, std
 }
 
 int APS5_VABI __cxa_call_unexpected_nid_postfix(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 

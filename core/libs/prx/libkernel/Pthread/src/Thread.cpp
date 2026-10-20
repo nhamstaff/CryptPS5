@@ -381,6 +381,30 @@ bool LiveGuestThreadExists(std::int64_t tid) {
     return false;
 }
 
+bool GetLiveGuestThreadAffinity(std::int64_t tid, KernelCpumask* mask) {
+    auto& registry = CpuClocks();
+    std::lock_guard lock(registry.lock);
+    for (const auto& [id, thread] : registry.threads) {
+        if (!thread->_finished.load(std::memory_order_acquire) && thread->tid == tid) {
+            if (mask) *mask = thread->affinity.load(std::memory_order_relaxed);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool SetLiveGuestThreadAffinity(std::int64_t tid, KernelCpumask mask) {
+    auto& registry = CpuClocks();
+    std::lock_guard lock(registry.lock);
+    for (const auto& [id, thread] : registry.threads) {
+        if (!thread->_finished.load(std::memory_order_acquire) && thread->tid == tid) {
+            thread->affinity.store(mask, std::memory_order_relaxed);
+            return true;
+        }
+    }
+    return false;
+}
+
 bool GuestThreadCpuNanos(int cpuClockThread, std::uint64_t* nanos) {
     auto& registry = CpuClocks();
     std::lock_guard lock(registry.lock);

@@ -37,7 +37,6 @@ int APS5_VABI sceConvertKeycodeGetVirtualKeycode(std::uint64_t a0, std::uint64_t
 }
 
 int APS5_VABI sceConvertKeycodeGetCharacterFromKeyboardData(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 

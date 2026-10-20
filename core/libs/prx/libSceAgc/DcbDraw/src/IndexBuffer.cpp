@@ -43,15 +43,13 @@ std::uint32_t* APS5_VABI sceAgcDcbSetIndexSize_0600(CommandBuffer* buf, std::uin
 }
 
 std::uint32_t* APS5_VABI sceAgcDcbSetIndexIndirectArgs(CommandBuffer* buf, std::uint32_t dataOffsetInBytes) {
-    (void)buf;
     (void)dataOffsetInBytes;
-    NotImplemented_nid_no_patch(__func__);
-    return nullptr;
+    if (buf == nullptr) return nullptr;
+    return Agc::Command::WriteNop(buf, 4, __func__);
 }
 
 std::uint32_t APS5_VABI sceAgcDcbSetIndexIndirectArgsGetSize() {
-    NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return 16;
 }
 
 }

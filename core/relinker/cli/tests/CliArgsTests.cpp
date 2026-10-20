@@ -53,7 +53,7 @@ void defaults() {
     require(args.inputPath == "input.elf", "input path was not captured");
     require(args.outputPath == "output.elf", "output path was not captured");
     require(!args.skipSyscallCheck && !args.trapSdkSyscallStubs && !args.skipSceModule && !args.toIntel && !args.writeRegistry &&
-        !args.toWindows && !args.lazyBinding && !args.autorun && !args.windowsDiagnostics && !args.windowsGui,
+        !args.toWindows && !args.lazyBinding && !args.autorun && !args.windowsDiagnostics && !args.windowsGui && !args.windowsDynamicBase,
         "a flag defaulted to true");
     require(args.unusedFilterLevel == 0u, "unused filter level did not default to 0");
     require(args.runPath == "$ORIGIN/libs", "run path did not keep its default");
@@ -62,7 +62,7 @@ void defaults() {
 
 void booleanFlags() {
     const auto args = parse({"--skip-syscall-check", "--skip-sce-module", "--to-intel", "--registry",
-        "--windows", "--lazy-binding", "--autorun", "--windows-diagnostics", "--windows-gui",
+        "--windows", "--lazy-binding", "--autorun", "--windows-diagnostics", "--windows-gui", "--windows-dynamic-base",
         "input.elf", "output.elf"});
     require(args.skipSyscallCheck, "--skip-syscall-check was ignored");
     require(args.skipSceModule, "--skip-sce-module was ignored");
@@ -73,6 +73,7 @@ void booleanFlags() {
     require(args.autorun, "--autorun was ignored");
     require(args.windowsDiagnostics, "--windows-diagnostics was ignored");
     require(args.windowsGui, "--windows-gui was ignored");
+    require(args.windowsDynamicBase, "--windows-dynamic-base was ignored");
     require(args.inputPath == "input.elf" && args.outputPath == "output.elf", "flags consumed the positional paths");
 }
 
@@ -199,6 +200,17 @@ void windowsGuiRequiresWindows() {
     require(ok.windowsGui && ok.toWindows, "--windows-gui with --windows was rejected");
 }
 
+void windowsDynamicBase() {
+    const std::string message = "--windows-dynamic-base requires --windows";
+    expectThrows({"--windows-dynamic-base", "input.elf", "output.elf"}, message);
+    const auto ok = parse({"--windows", "--windows-dynamic-base", "input.elf", "output.elf"});
+    require(ok.windowsDynamicBase && ok.toWindows, "--windows-dynamic-base with --windows was rejected");
+    expectThrows({"--windows", "--windows-fixed-base", "0x400000", "--windows-dynamic-base", "input.elf", "output.exe"},
+        "--windows-dynamic-base conflicts with --windows-fixed-base");
+    expectThrows({"--windows", "--windows-dynamic-base", "--windows-fixed-base", "0x400000", "input.elf", "output.exe"},
+        "--windows-dynamic-base conflicts with --windows-fixed-base");
+}
+
 void missingPositionals() {
     expectUsage({});
     expectUsage({"input.elf"});
@@ -305,6 +317,7 @@ int main() {
         tooManyPositionals();
         windowsDiagnosticsRequiresWindows();
         windowsGuiRequiresWindows();
+        windowsDynamicBase();
         missingPositionals();
         windowsFixedBase();
         linuxFixedBase();

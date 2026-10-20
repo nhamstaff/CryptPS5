@@ -20,6 +20,7 @@ struct ConversionOptions {
     bool WindowsGui = false;
     bool TraceImports = false;
     std::optional<std::uint64_t> WindowsFixedBase;
+    bool WindowsDynamicBase = false;
     bool WindowsDiagnostics = false;
     std::optional<std::uint64_t> LinuxFixedBase;
     std::string RunPath = "$ORIGIN/libs";

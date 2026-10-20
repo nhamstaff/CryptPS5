@@ -266,7 +266,10 @@ WindowsEntryStub WindowsEntryStubBuilder::Build(const std::uint32_t dataRva, con
         call("lstrlenA");
         code.Emit({0x48, 0x85, 0xc0});
         const auto empty = code.Branch({0x0f, 0x84});
-        code.Emit({0x89, 0x44, 0x24, 0x3c, 0xb9});
+        code.Emit({0x89, 0x44, 0x24, 0x3c});
+        code.Rip({0x48, 0x8d, 0x0d}, stringRva);
+        call("OutputDebugStringA");
+        code.Emit({0xb9});
         code.U32(isError ? 0xfffffff4u : 0xfffffff5u);
         call("GetStdHandle");
         code.Emit({0x48, 0x85, 0xc0});

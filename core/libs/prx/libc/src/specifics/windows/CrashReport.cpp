@@ -30,7 +30,21 @@ void Report(const char* format, ...) {
     if (length <= 0) return;
     if (length > static_cast<int>(sizeof(buffer)) - 1) length = sizeof(buffer) - 1;
     DWORD written = 0;
-    WriteFile(GetStdHandle(STD_ERROR_HANDLE), buffer, static_cast<DWORD>(length), &written, nullptr);
+    const HANDLE errorHandle = GetStdHandle(STD_ERROR_HANDLE);
+    if (errorHandle != nullptr && errorHandle != INVALID_HANDLE_VALUE) {
+        WriteFile(errorHandle, buffer, static_cast<DWORD>(length), &written, nullptr);
+    }
+    OutputDebugStringA(buffer);
+    static HANDLE crashLog = INVALID_HANDLE_VALUE;
+    static bool opened = false;
+    if (!opened) {
+        opened = true;
+        crashLog = CreateFileW(L"anyps5-crash.log", GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    }
+    if (crashLog != INVALID_HANDLE_VALUE) {
+        WriteFile(crashLog, buffer, static_cast<DWORD>(length), &written, nullptr);
+        FlushFileBuffers(crashLog);
+    }
 }
 
 void ReportAllThreads();
@@ -395,6 +409,14 @@ LONG WINAPI ReportCrash(EXCEPTION_POINTERS* info) {
     std::fflush(stderr);
     ReportAllThreads();
     std::fflush(stderr);
+    if (HMODULE user32 = GetModuleHandleA("user32.dll")) {
+        using MessageBoxAFn = int(WINAPI*)(HWND, LPCSTR, LPCSTR, UINT);
+        if (auto pfnMessageBoxA = reinterpret_cast<MessageBoxAFn>(GetProcAddress(user32, "MessageBoxA"))) {
+            char alert[256];
+            std::snprintf(alert, sizeof(alert), "A fatal crash occurred in AnyPS5 (Exception 0x%08lX).\nCrash details have been saved to anyps5-crash.log.", static_cast<unsigned long>(info->ExceptionRecord->ExceptionCode));
+            pfnMessageBoxA(nullptr, alert, "AnyPS5 Crash Report", 0x00000010L | 0x00000000L);
+        }
+    }
     return EXCEPTION_CONTINUE_SEARCH;
 }
 

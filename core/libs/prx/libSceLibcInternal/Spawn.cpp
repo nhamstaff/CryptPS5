@@ -95,25 +95,23 @@ int APS5_VABI posix_spawn_file_actions_addclose_nid_postfix(PosixSpawnFileAction
 }
 
 int APS5_VABI posix_spawn_nid_postfix(std::int32_t* processId, const char* path, PosixSpawnFileActions* const* actions, PosixSpawnAttributes* const* attributes, char* const* arguments, char* const* environment) {
-    (void)processId;
     (void)path;
     (void)actions;
     (void)attributes;
     (void)arguments;
     (void)environment;
-    NotImplemented_nid_no_patch("posix_spawn: process creation");
-    return -1;
+    if (processId) *processId = -1;
+    return 38;
 }
 
 int APS5_VABI posix_spawnp_nid_postfix(std::int32_t* processId, const char* file, PosixSpawnFileActions* const* actions, PosixSpawnAttributes* const* attributes, char* const* arguments, char* const* environment) {
-    (void)processId;
     (void)file;
     (void)actions;
     (void)attributes;
     (void)arguments;
     (void)environment;
-    NotImplemented_nid_no_patch("posix_spawnp: process creation");
-    return -1;
+    if (processId) *processId = -1;
+    return 38;
 }
 
 }

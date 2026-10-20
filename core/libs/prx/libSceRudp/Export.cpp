@@ -103,7 +103,6 @@ int APS5_VABI sceRudpEnableInternalIOThread(uint32_t stack_size, uint32_t priori
 }
 
 int APS5_VABI sceRudpEnableInternalIOThread2() {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
@@ -157,7 +156,6 @@ int APS5_VABI sceRudpSetOption(int ctx_id, int option, const void* value, uint32
 }
 
 int APS5_VABI sceRudpGetOption() {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
@@ -190,7 +188,6 @@ int APS5_VABI sceRudpGetContextStatus(int ctx_id, void* status, uint32_t size) {
 }
 
 int APS5_VABI sceRudpGetRemoteInfo() {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
@@ -270,7 +267,6 @@ int APS5_VABI sceRudpProcessEvents(void) {
 }
 
 int APS5_VABI sceRudpNetReceived(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 

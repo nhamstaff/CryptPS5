@@ -1,43 +1,92 @@
-*.d
+# ==============================================================================
+# CryptPS5 — Production Clean-Room Repository Ignore Policy
+# Strictly prevents binary dumps, third-party vendor assets, and cryptographic keys
+# ==============================================================================
 
-*.slo
-*.lo
+# ── Dynamic Key Files & Secrets (MANDATORY: NEVER COMMIT) ──────────────────
+keys.txt
+*.keys
+*.key
+*.pem
+*.der
+*.crt
+sec_keys/
+keys/
+key_database.bin
+keyfile*
+
+# ── Firmware Archives & Raw Partition Images ───────────────────────────────
+*.PUP
+*.pup
+*.img
+*.iso
+*.pfs
+system.img
+system_ex.img
+kernel.elf
+secure3.elf
+preinst.img
+preinst_ex.img
+recovery.img
+partition_*.img
+partition_table.bin
+windows-diagnostics-imports.txt
+
+# ── Extraction & Working Directories ──────────────────────────────────────
+extracted_pup/
+pup_extracted/
+decrypted_partitions/
+app0/
+sce_module/
+elfs/
+dump/
+dumps/
+output/
+bin/
+
+# ── Compiled Binaries & Executables ───────────────────────────────────────
+*.exe
+*.out
+*.bin
+*.elf
+*.self
+*.prx
+*.sprx
+*.guest.prx
+*.so
+*.so.*
+*.dll
+*.dylib
+*.app
+test_astro.exe
+AnyPS5.exe
+relinker.exe
+ps5decrypt.exe
+test_hle.exe
+tests_hle_verification.exe
+
+# ── Object Files & Intermediate Compilations ──────────────────────────────
 *.o
 *.obj
-
+*.slo
+*.lo
+*.a
+*.lib
+*.la
+*.lai
+*.d
 *.gch
 *.pch
-
+*.dwo
 *.ilk
 *.pdb
 
-*.so
-*.so.*
-*.dylib
-*.dll
-
-*.mod
-*.smod
-
-*.lai
-*.la
-*.a
-*.lib
-
-*.exe
-*.out
-*.app
-
-_SaveData/
-_sd/
-
+# ── Build Systems & Output Artifacts ──────────────────────────────────────
 build/
-build_tools/
+build-*/
+build_*/
 b/
 Build/
-build-*/
-cmake-build-debug/
-cmake-build-release/
 cmake-build-*/
 CMakeFiles/
 CMakeCache.txt
@@ -47,65 +96,49 @@ install_manifest.txt
 compile_commands.json
 vcpkg_installed/
 Testing/
-tests/sdf/
 .cache/
 
+# ── WebAssembly & Toolchain Caches ────────────────────────────────────────
 sqlce_wasm.js
 sqlce_wasm.wasm
 emsdk/
 build-wasm/
 
+# ── IDEs, Tooling & System Artifacts ──────────────────────────────────────
+.agents/
 .idea/
 .vscode/
+.vs/
+*.swp
+*.bak
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
 
-.venv/
-venv/
-env/
-ENV/
-
+# ── Python & Test Caches ──────────────────────────────────────────────────
 __pycache__/
+*.pyc
 *.pyo
 *.pyd
 *.egg
 *.egg-info/
 dist/
-
-*.dwo
-
 .pytest_cache/
 coverage.xml
 .coverage
 htmlcov/
+.venv/
+venv/
+env/
+ENV/
 
-*.tmp
-*.log
-*.bak
-*.swp
-
-raw/
-images/
-sessions/
-downloads/
-
-*.tar.gz
-*.zip
-*.whl
-*.env
-*.sdf
-
-*.bat
-*.jpg
-*.png
-
-*.json
+# ── Preserved Clean Configuration & Documentation ────────────────────────
+!CMakeLists.txt
+!CONTRIBUTING.md
+!LICENSE
+!README.md
+!docs/
+!core/
+!tools/
 !demo/web/i18n/*.json
-
-!/assets/*.jpg
-!/assets/*.png
-
-.DS_Store
-Thumbs.db
-cookies.txt
-
-.env
-.env.local

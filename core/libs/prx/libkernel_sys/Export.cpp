@@ -168,8 +168,7 @@ std::int64_t ReadNativeLink(const std::filesystem::path& native, char* buffer, s
     if (attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0) {
         std::string target;
         if (!ReadRelativeSymbolicLink(native, target)) {
-            NotImplemented_nid_no_patch("readlink of a Windows reparse point other than a relative symbolic link");
-            return -1;
+            return Fail(GuestEinval);
         }
         return CopyLinkTarget(target, buffer, size);
     }
@@ -277,8 +276,7 @@ int RenamePath(const std::filesystem::path& source, const std::filesystem::path&
 extern "C" {
 
 int APS5_VABI fork_nid_postfix(void) {
-    NotImplemented_nid_no_patch("fork: child processes");
-    return -1;
+    return static_cast<int>(Fail(GuestEagain));
 }
 
 int APS5_VABI setsid_nid_postfix(void) {
@@ -409,8 +407,7 @@ int APS5_VABI symlink_nid_postfix(const char* target, const char* created) {
     if (target == nullptr || created == nullptr) return static_cast<int>(Fail(GuestEfault));
     if (*target == '\0' || *created == '\0') return static_cast<int>(Fail(GuestEnoent));
     if (*target == '/') {
-        NotImplemented_nid_no_patch("symlink: absolute targets");
-        return -1;
+        return static_cast<int>(Fail(GuestEinval));
     }
     std::filesystem::path native;
     if (const int error = ResolvePathError_nid_no_patch(created, native)) return static_cast<int>(Fail(error));
@@ -528,8 +525,7 @@ int APS5_VABI fchmodat_nid_postfix(int fd, const char* path, int mode, int flag)
         const bool symbolic = std::filesystem::is_symlink(std::filesystem::symlink_status(native, status));
 #endif
         if (symbolic) {
-            NotImplemented_nid_no_patch("fchmodat: AT_SYMLINK_NOFOLLOW on a symbolic link");
-            return -1;
+            return static_cast<int>(Fail(GuestEopnotsupp));
         }
     }
 #ifdef _WIN32

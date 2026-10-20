@@ -191,7 +191,7 @@ int Player::PostInit(const AvPlayerPostInitData& data) {
 int Player::AddSource(std::string_view path, std::uint32_t sourceType) {
     if (path.empty()) return SCE_AVPLAYER_ERROR_OPERATION_FAILED;
     if (sourceType == SourceTypeUnknown) sourceType = DetectSourceType(path);
-    if (sourceType == SourceTypeHls) NotImplemented_nid_no_patch("sceAvPlayerAddSource (HLS)");
+    if (sourceType == SourceTypeHls) return SCE_AVPLAYER_ERROR_OPERATION_FAILED;
     std::lock_guard lock(mutex);
     if (source) return SCE_AVPLAYER_ERROR_OPERATION_FAILED;
     auto opened = OpenSource({memory, file, videoBuffers}, std::string(path), *this);

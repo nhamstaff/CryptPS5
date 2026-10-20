@@ -24,6 +24,7 @@ struct Args {
     bool windowsDiagnostics = false;
     bool windowsGui = false;
     std::optional<std::uint64_t> windowsFixedBase;
+    bool windowsDynamicBase = false;
     bool traceImports = false;
     std::optional<std::uint64_t> linuxFixedBase;
     std::uint32_t unusedFilterLevel = 0;

@@ -33,7 +33,7 @@ inline int ScanWindowsArguments_nid_no_patch(const char* format, const void* sou
         const char conversion = *format;
         if (!conversion) { errno = 22; return EOF; }
         if (!std::strchr("diouxXaAeEfFgGcspn[", conversion)) {
-            NotImplemented_nid_no_patch("vsscanf format conversion");
+            errno = 22;
             return EOF;
         }
         ++format;

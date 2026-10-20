@@ -60,6 +60,7 @@ ConvertedExecutable Convert(const Cli::Args& args, const std::string& inputPath,
     options.WindowsGui = args.windowsGui;
     options.TraceImports = args.traceImports;
     options.WindowsFixedBase = mainExecutable ? args.windowsFixedBase : std::nullopt;
+    options.WindowsDynamicBase = args.windowsDynamicBase && mainExecutable;
     options.WindowsDiagnostics = args.windowsDiagnostics && mainExecutable;
     options.LinuxFixedBase = args.linuxFixedBase;
     options.ExcludedModules = args.excludedSceModules;

@@ -435,91 +435,108 @@ int APS5_VABI sceSslSetVerifyCallback(int sslConnectionId, SslVerifyCallback cbf
 }
 
 int APS5_VABI sceSslConnect(int sslConnectionId) {
-    (void)sslConnectionId;
-    NotImplemented_nid_no_patch(__func__);
+    std::lock_guard lock(State().mutex);
+    (void)RequireConnection(__func__, sslConnectionId);
     return 0;
 }
 
 int APS5_VABI sceSslRead(int sslConnectionId, void* buf, size_t len, int flags) {
-    (void)sslConnectionId;
-    (void)buf;
-    (void)len;
     (void)flags;
-    NotImplemented_nid_no_patch(__func__);
+    std::lock_guard lock(State().mutex);
+    (void)RequireConnection(__func__, sslConnectionId);
+    if (buf != nullptr && len > 0) {
+        std::memset(buf, 0, len);
+    }
     return 0;
 }
 
 int APS5_VABI sceSslWrite(int sslConnectionId, void* buf, size_t len, int flags) {
-    (void)sslConnectionId;
     (void)buf;
-    (void)len;
     (void)flags;
-    NotImplemented_nid_no_patch(__func__);
+    std::lock_guard lock(State().mutex);
+    (void)RequireConnection(__func__, sslConnectionId);
+    return static_cast<int>(len);
+}
+
+int APS5_VABI sceSslClose(int sslConnectionId) {
+    std::lock_guard lock(State().mutex);
+    State().connections.erase(sslConnectionId);
     return 0;
 }
 
-int APS5_VABI sceSslClose() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
-}
-
-int APS5_VABI sceSslGetSerialNumber() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
-}
-
-int APS5_VABI sceSslFreeSslCertName(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslGetSerialNumber(const void* cert, void* buffer, unsigned int* bufferLength) {
+    (void)cert;
+    (void)buffer;
+    if (bufferLength) *bufferLength = 0;
     return 0;
 }
 
-int APS5_VABI sceSslDisableVerifyOption(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslFreeSslCertName(void* name) {
+    (void)name;
     return 0;
 }
 
-int APS5_VABI sceSslGetAlpnSelected(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslDisableVerifyOption(int sslConnectionId, unsigned int option) {
+    (void)sslConnectionId;
+    (void)option;
     return 0;
 }
 
-int APS5_VABI sceSslSetAlpn(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslGetAlpnSelected(int sslConnectionId, void* alpn, unsigned int* alpnLength) {
+    (void)sslConnectionId;
+    (void)alpn;
+    if (alpnLength) *alpnLength = 0;
     return 0;
 }
 
-int APS5_VABI sceSslSetMinSslVersion(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslSetAlpn(int sslConnectionId, const void* alpnList, unsigned int alpnCount) {
+    (void)sslConnectionId;
+    (void)alpnList;
+    (void)alpnCount;
     return 0;
 }
 
-int APS5_VABI sceSslGetIssuerName(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslSetMinSslVersion(int sslConnectionId, int version) {
+    (void)sslConnectionId;
+    (void)version;
     return 0;
 }
 
-int APS5_VABI sceSslGetNameEntryCount(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslGetIssuerName(const void* cert, void** name) {
+    (void)cert;
+    if (name) *name = nullptr;
     return 0;
 }
 
-int APS5_VABI sceSslGetNameEntryInfo(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslGetNameEntryCount(const void* name, int* count) {
+    (void)name;
+    if (count) *count = 0;
     return 0;
 }
 
-int APS5_VABI sceSslGetPem(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslGetNameEntryInfo(const void* name, int index, void* info) {
+    (void)name;
+    (void)index;
+    (void)info;
     return 0;
 }
 
-int APS5_VABI sceSslGetSubjectName(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslGetPem(const void* cert, void* buffer, unsigned int* bufferLength) {
+    (void)cert;
+    (void)buffer;
+    if (bufferLength) *bufferLength = 0;
     return 0;
 }
 
-int APS5_VABI sceSslEnableVerifyOption(void) {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceSslGetSubjectName(const void* cert, void** name) {
+    (void)cert;
+    if (name) *name = nullptr;
+    return 0;
+}
+
+int APS5_VABI sceSslEnableVerifyOption(int sslConnectionId, unsigned int option) {
+    (void)sslConnectionId;
+    (void)option;
     return 0;
 }
 

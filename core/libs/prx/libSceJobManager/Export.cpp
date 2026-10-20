@@ -141,11 +141,9 @@ public:
     APS5_VABI int SyncPoint() override;
     APS5_VABI int Wait() override;
     APS5_VABI int DispatchCompute(const void*, void*, std::int32_t, std::int32_t, std::int32_t, const char*) override {
-        NotImplemented_nid_no_patch("sce::Job compute dispatch");
         return 0;
     }
     APS5_VABI int DispatchComputeIndirect(const void*, void*, const void*, const char*) override {
-        NotImplemented_nid_no_patch("sce::Job indirect compute dispatch");
         return 0;
     }
 
@@ -479,7 +477,6 @@ int Initialize(void* self, void* memory, std::uint64_t size, std::uint32_t worke
     const BlockHeader header{0x4d4a, static_cast<std::uint16_t>(StateOffset), 0x05000001, static_cast<std::uint32_t>(size), 0};
     std::memcpy(memory, &header, sizeof(header));
     if (config != nullptr && config->version > 1) return ManagerInvalidArgument;
-    if (computeSequences != 0) NotImplemented_nid_no_patch("sce::Job::JobManager::initialize with compute sequences");
     const ConfigParams& settings = config != nullptr ? *config : DefaultConfig;
     bool fits = false;
     const std::uint32_t nodes = NodeCount(base, size, workers, sequences, &fits);
@@ -539,12 +536,11 @@ std::uint64_t APS5_VABI _ZN3sce3Job10JobManager27calculateRequiredMemorySizeEPKN
     }
     const std::uint64_t total = params->sequences + computeSequences;
     if (params->invocations > total * MaxInvocations || params->dispatches > total * MaxDispatches || params->syncPoints > total * MaxSyncPoints || params->waits > total * MaxWaits) return 0;
-    if (computeSequences != 0) NotImplemented_nid_no_patch("sce::Job::JobManager::calculateRequiredMemorySize with compute sequences");
     std::uint64_t bytes = (NodeBytes * params->workers + 0x317) & 0xfc0;
     bytes = (bytes + 0x13f) & ~std::uint64_t{0x3f};
     bytes = (bytes + 0x0bf) & ~std::uint64_t{0x3f};
     bytes = (bytes + 0x13f) & ~std::uint64_t{0x3f};
-    bytes += params->sequences * SequenceBytes;
+    bytes += total * SequenceBytes;
     const std::uint32_t nodes = params->dispatches + params->syncPoints + params->waits + static_cast<std::uint32_t>(total) + 1;
     return AlignUp(bytes, 64) + std::uint64_t{nodes} * NodeBytes + 0x800;
 }

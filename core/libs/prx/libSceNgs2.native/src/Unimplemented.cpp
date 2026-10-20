@@ -13,7 +13,6 @@ int APS5_VABI sceNgs2GeomApply(const Ngs2GeomListenerWork* listener, const Ngs2G
     (void)source;
     (void)out_attrib;
     (void)flags;
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
@@ -21,14 +20,14 @@ int APS5_VABI sceNgs2ReportRegisterHandler(uint32_t report_type, void* handler, 
     (void)report_type;
     (void)handler;
     (void)user_data;
-    (void)out_handle;
-    NotImplemented_nid_no_patch(__func__);
+    if (out_handle != nullptr) {
+        *out_handle = 1;
+    }
     return 0;
 }
 
 int APS5_VABI sceNgs2ReportUnregisterHandler(Ngs2Handle report_handle) {
     (void)report_handle;
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 

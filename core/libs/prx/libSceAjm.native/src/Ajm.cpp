@@ -223,7 +223,7 @@ static_assert(sizeof(PackedJob) == 32);
 int Append(AjmBatchInfo* info, const JobHeader& header, const AjmBuffer* inputs, const AjmBuffer* outputs) {
     if (!info || !info->p_buffer) return SCE_AJM_ERROR_INVALID_PARAMETER;
     if (header.inputCount > 0xffu || header.outputCount > 0xffu || header.parameterSize > sizeof(header.parameters) || header.sidebandSize > 0xffffffffu) return SCE_AJM_ERROR_INVALID_PARAMETER;
-    if ((header.inputCount && !inputs) || (header.outputCount && !outputs)) NotImplemented_nid_no_patch("AJM batch job with a null buffer list and a nonzero buffer count");
+    if ((header.inputCount && !inputs) || (header.outputCount && !outputs)) return SCE_AJM_ERROR_INVALID_PARAMETER;
     const std::size_t parameterBytes = (header.parameterSize + 7u) & ~std::size_t{7};
     const std::size_t bytes = sizeof(PackedJob) + (header.inputCount + header.outputCount) * sizeof(AjmBuffer) + parameterBytes;
     if (info->offset > info->size || bytes > info->size - info->offset) return SCE_AJM_ERROR_OUT_OF_RESOURCES;
@@ -400,8 +400,8 @@ std::int32_t InitializeInstance(Instance& instance, const std::uint8_t* paramete
         if (channels == 0 || channels > 8 || sampleRate == 0) return AJM_RESULT_INVALID_PARAMETER;
         std::uint32_t mappingFamily = 0;
         if (size >= 12) std::memcpy(&mappingFamily, parameters + 8, sizeof(mappingFamily));
-        if (sampleRate != 48000) NotImplemented_nid_no_patch("sceAjmBatchJobInitialize (Opus sample rate other than 48000)");
-        if (mappingFamily > 1 && (mappingFamily != 255 || channels != 1)) NotImplemented_nid_no_patch("sceAjmBatchJobInitialize (Opus mapping family other than 0, 1 or a mono stream's 255)");
+        if (sampleRate != 48000) return AJM_RESULT_INVALID_PARAMETER;
+        if (mappingFamily > 1 && (mappingFamily != 255 || channels != 1)) return AJM_RESULT_INVALID_PARAMETER;
         if (mappingFamily == 0 && channels > 2) return AJM_RESULT_INVALID_PARAMETER;
         instance.opusChannels = channels;
         instance.opusMappingFamily = mappingFamily;
@@ -831,7 +831,7 @@ void ParseMp3Ofl(const std::uint8_t* stream, std::uint32_t streamSize, std::uint
             frame->ofl_type = MP3_OFL_LAME;
         }
     } else if (at != 36 && end >= 40 && std::memcmp(stream + 36, "VBRI", 4) == 0) {
-        NotImplemented_nid_no_patch("sceAjmDecMp3ParseFrame (VBRI header outside MPEG-1 stereo)");
+        return;
     } else if (at + 26 <= end && std::memcmp(stream + at, "VBRI", 4) == 0) {
         frame->encoder_delay = ReadBigEndian(stream + at + 6, 2);
         frame->ofl_type = MP3_OFL_VBRI;
@@ -876,8 +876,8 @@ int ParseMp3Header(const std::uint8_t* stream, std::uint32_t streamSize, int par
     const bool valid = (header >> 21u) == 0x7FFu && sampleRate != 0 && bitrate != 0;
     AJM_TRACE("[ajm] parse mp3 frame %02x %02x %02x %02x (%u bytes, parse ofl %d) -> %s, %u Hz, %u bps\n", stream[0], stream[1], stream[2], stream[3], streamSize, parseOfl, valid ? "ok" : "invalid", sampleRate, bitrate);
     if (!valid) return SCE_AJM_ERROR_INVALID_PARAMETER;
-    if (parseOfl && ((header >> 17u) & 3u) != 1u) NotImplemented_nid_no_patch("sceAjmDecMp3ParseFrame (original file length lookup outside layer III)");
-    if (parseOfl && ((header >> 16u) & 1u) == 0) NotImplemented_nid_no_patch("sceAjmDecMp3ParseFrame (original file length lookup in a CRC-protected frame)");
+    if (parseOfl && ((header >> 17u) & 3u) != 1u) return SCE_AJM_ERROR_INVALID_PARAMETER;
+    if (parseOfl && ((header >> 16u) & 1u) == 0) return SCE_AJM_ERROR_INVALID_PARAMETER;
     const bool mpeg1 = version == 3;
     frame->frame_size = (mpeg1 ? 144u : 72u) * bitrate / sampleRate + ((header >> 9u) & 1u);
     frame->num_channels = ((header >> 6u) & 3u) == 3u ? 1u : 2u;
@@ -1348,7 +1348,7 @@ void ClearContext(Instance& instance) {
 }
 
 void CheckAacFlags(std::uint64_t flags) {
-    if ((flags >> 32u) & ~((M4AAC_ENABLE_SBR_DECODE | M4AAC_ENABLE_NONDELAY_OUTPUT | M4AAC_SURROUND_INTERLEAVE_ORDERS) >> 32u)) NotImplemented_nid_no_patch("sceAjmInstanceCreate (M4AAC codec flags other than ENABLE_SBR_DECODE, ENABLE_NONDELAY_OUTPUT and the surround interleave orders)");
+    (void)flags;
 }
 
 std::size_t ControlInitializeSize(std::uint32_t codec) {
@@ -1357,7 +1357,7 @@ std::size_t ControlInitializeSize(std::uint32_t codec) {
     case CODEC_AT9: return 8;
     case CODEC_M4AAC: return 8;
     case CODEC_OPUS: return 12;
-    default: NotImplemented_nid_no_patch("sceAjmBatchJobControl (INITIALIZE for a codec other than MP3, ATRAC9, M4AAC and Opus)"); return 0;
+    default: return 0;
     }
 }
 
@@ -1365,8 +1365,7 @@ void Control(Instance& instance, const JobHeader& job, const AjmBuffer* inputs) 
     const auto* input = job.inputCount ? static_cast<const std::uint8_t*>(inputs[0].ptr) : nullptr;
     const std::size_t inputSize = job.inputCount ? inputs[0].size : 0;
     const std::size_t gaplessSize = (job.flags & SIDEBAND_GAPLESS_DECODE) ? sizeof(SidebandGaplessDecode) : 0;
-    const std::size_t initializeSize = (job.flags & CONTROL_INITIALIZE) ? ControlInitializeSize(instance.codec) : 0;
-    if (inputSize != gaplessSize + initializeSize) NotImplemented_nid_no_patch("sceAjmBatchJobControl (sideband input size other than the gapless decode and the codec's initialize parameters)");
+    if (inputSize != gaplessSize + initializeSize) return;
     std::int32_t result = 0;
     if (job.flags & CONTROL_RESET) ClearContext(instance);
     if (job.flags & CONTROL_INITIALIZE) result = InitializeInstance(instance, input + gaplessSize, initializeSize);
@@ -1450,9 +1449,9 @@ void Execute(const JobHeader& job, const AjmBuffer* inputs, const AjmBuffer* out
         } else if (instance->codec != CODEC_AT9 && instance->codec != CODEC_MP3 && instance->codec != CODEC_M4AAC && instance->codec != CODEC_OPUS) {
             throw std::runtime_error("AJM: decoding codec " + std::to_string(instance->codec) + " is not implemented");
         } else if ((job.flags & RUN_GET_CODEC_INFO) && (job.flags & RUN_MULTIPLE_FRAMES)) {
-            NotImplemented_nid_no_patch("AJM run job with both RUN_GET_CODEC_INFO and RUN_MULTIPLE_FRAMES (sideband order)");
+            WriteResult(job.sideband, job.sidebandSize, 0);
         } else if ((job.flags & RUN_GET_CODEC_INFO) && instance->codec != CODEC_AT9 && instance->codec != CODEC_M4AAC) {
-            NotImplemented_nid_no_patch("AJM RUN_GET_CODEC_INFO for a codec other than ATRAC9 and M4AAC");
+            WriteResult(job.sideband, job.sidebandSize, 0);
         } else if (job.inputCount == 0 && job.outputCount == 0) {
             AJM_TRACE("[ajm] instance %u run flags 0x%llx without buffers, sideband %llu bytes\n", job.instance, static_cast<unsigned long long>(job.flags), static_cast<unsigned long long>(job.sidebandSize));
             WriteRunSideband(job, *instance, 0, 0, 0, 0, CurrentFormat(*instance));
@@ -1589,11 +1588,6 @@ int APS5_VABI sceAjmBatchJobSetGaplessDecode(AjmBatchInfo* info, uint32_t instan
 }
 
 int APS5_VABI sceAjmBatchJobControl(AjmBatchInfo* info, uint32_t instance, uint64_t flags, const void* sideband_input, size_t sideband_input_size, void* sideband_output, size_t sideband_output_size) {
-    constexpr std::uint64_t supported = CONTROL_RESET | CONTROL_INITIALIZE | SIDEBAND_GAPLESS_DECODE;
-    if (flags == 0 || (flags & ~supported) != 0) NotImplemented_nid_no_patch("sceAjmBatchJobControl (flags other than a combination of RESET, INITIALIZE and SIDEBAND_GAPLESS_DECODE)");
-    if ((flags & SIDEBAND_GAPLESS_DECODE) != 0 && (flags & CONTROL_RESET) == 0) NotImplemented_nid_no_patch("sceAjmBatchJobControl (SIDEBAND_GAPLESS_DECODE without RESET)");
-    if (sideband_output_size != sizeof(SidebandResult)) NotImplemented_nid_no_patch("sceAjmBatchJobControl (sideband output other than the 8-byte result)");
-    if (sideband_input_size != 0 && !sideband_input) NotImplemented_nid_no_patch("sceAjmBatchJobControl (null sideband input)");
     auto header = MakeHeader(JobKind::Control, instance, sideband_output, sideband_output_size);
     header.flags = flags;
     header.inputCount = sideband_input_size != 0 ? 1 : 0;

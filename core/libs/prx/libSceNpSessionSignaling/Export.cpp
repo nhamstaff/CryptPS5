@@ -80,23 +80,19 @@ int APS5_VABI sceNpSessionSignalingRequestPrepare(uint32_t contextId, uint32_t* 
 }
 
 int APS5_VABI sceNpSessionSignalingGetMemoryInfo(void) {
-    NotImplemented_nid_no_patch(__func__);
     return 0;
 }
 
 int APS5_VABI sceNpSessionSignalingGetConnectionStatistics(void) {
-    NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return SCE_NP_SESSION_SIGNALING_ERROR_UNAVAILABLE;
 }
 
 int APS5_VABI sceNpSessionSignalingGetConnectionFromPeerAddress(void) {
-    NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return SCE_NP_SESSION_SIGNALING_ERROR_UNAVAILABLE;
 }
 
 int APS5_VABI sceNpSessionSignalingGetGroupFromSessionId(void) {
-    NotImplemented_nid_no_patch(__func__);
-    return 0;
+    return SCE_NP_SESSION_SIGNALING_ERROR_UNAVAILABLE;
 }
 
 }

@@ -35,63 +35,74 @@ int APS5_VABI sceVoiceQoSEnd() {
     return 0;
 }
 
-int APS5_VABI sceVoiceQoSCreateLocalEndpoint() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSCreateLocalEndpoint(uint32_t* id) {
+    if (id) *id = 1;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSDeleteLocalEndpoint() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSDeleteLocalEndpoint(uint32_t id) {
+    (void)id;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSCreateRemoteEndpoint() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSCreateRemoteEndpoint(uint32_t* id) {
+    if (id) *id = 2;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSDeleteRemoteEndpoint() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSDeleteRemoteEndpoint(uint32_t id) {
+    (void)id;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSConnect() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSConnect(uint32_t localId, uint32_t remoteId) {
+    (void)localId;
+    (void)remoteId;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSDisconnect() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSDisconnect(uint32_t localId, uint32_t remoteId) {
+    (void)localId;
+    (void)remoteId;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSSetConnectionAttribute() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSSetConnectionAttribute(uint32_t localId, uint32_t remoteId, const void* attr) {
+    (void)localId;
+    (void)remoteId;
+    (void)attr;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSSetLocalEndpointAttribute() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSSetLocalEndpointAttribute(uint32_t id, const void* attr) {
+    (void)id;
+    (void)attr;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSSetRemoteEndpointAttribute() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSSetRemoteEndpointAttribute(uint32_t id, const void* attr) {
+    (void)id;
+    (void)attr;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSReadPacket() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSReadPacket(uint32_t id, void* packet, uint32_t* size) {
+    (void)id;
+    (void)packet;
+    if (size) *size = 0;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSWritePacket() {
- NotImplemented_nid_no_patch(__func__);
- return 0;
+int APS5_VABI sceVoiceQoSWritePacket(uint32_t id, const void* packet, uint32_t size) {
+    (void)id;
+    (void)packet;
+    (void)size;
+    return 0;
 }
 
-int APS5_VABI sceVoiceQoSGetLocalEndpointAttribute() {
-    NotImplemented_nid_no_patch(__func__);
+int APS5_VABI sceVoiceQoSGetLocalEndpointAttribute(uint32_t id, void* attr) {
+    (void)id;
+    (void)attr;
     return 0;
 }
 

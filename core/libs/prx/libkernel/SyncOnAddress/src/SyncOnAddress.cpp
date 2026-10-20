@@ -27,7 +27,11 @@ constexpr int UMTX_OP_WAKE = 3;
 constexpr int UMTX_OP_WAIT_UINT = 11;
 constexpr int UMTX_OP_WAIT_UINT_PRIVATE = 15;
 constexpr int UMTX_OP_WAKE_PRIVATE = 16;
+constexpr int UMTX_OP_MUTEX_WAKE = 17;
 constexpr int UMTX_OP_NWAKE_PRIVATE = 21;
+constexpr int UMTX_OP_MUTEX_WAKE2 = 22;
+constexpr int UMTX_OP_SEM2_WAIT = 23;
+constexpr int UMTX_OP_SEM2_WAKE = 24;
 constexpr int UMTX_OP_MAX = 27;
 constexpr std::uint32_t UMTX_ABSTIME = 1;
 constexpr int GUEST_CLOCK_REALTIME = 0;
@@ -165,9 +169,6 @@ int UmtxDeadline(const void* sizeArgument, const void* timeArgument, std::option
         time = *static_cast<const UmtxTime*>(timeArgument);
     }
     if (time.timeout.tv_sec < 0 || time.timeout.tv_nsec < 0 || time.timeout.tv_nsec >= NANOS_PER_SECOND) {
-        if (sizeArgument == nullptr) {
-            NotImplemented_nid_no_patch("_umtx_op timeout with size argument 0 that is not a valid timespec");
-        }
         return GUEST_EINVAL;
     }
 
@@ -289,25 +290,23 @@ int APS5_VABI _umtx_op_nid_postfix(void* object, int operation, std::uint64_t va
             break;
         case UMTX_OP_WAIT_UINT:
         case UMTX_OP_WAIT_UINT_PRIVATE:
+        case UMTX_OP_SEM2_WAIT:
             error = UmtxWait<std::uint32_t>(object, value, sizeArgument, timeArgument, caller);
             break;
         case UMTX_OP_WAKE:
         case UMTX_OP_WAKE_PRIVATE:
             error = UmtxWake(object, value, operation == UMTX_OP_WAKE_PRIVATE);
             break;
+        case UMTX_OP_MUTEX_WAKE:
+        case UMTX_OP_MUTEX_WAKE2:
+        case UMTX_OP_SEM2_WAKE:
+            error = UmtxWake(object, value == 0 ? 1 : value, true);
+            break;
         case UMTX_OP_NWAKE_PRIVATE:
             error = UmtxNwakePrivate(object, value);
             break;
         default:
-            if (operation < 0 || operation >= UMTX_OP_MAX) {
-                error = GUEST_EINVAL;
-            } else if (operation == UMTX_OP_RESERVED1) {
-                NotImplemented_nid_no_patch("_umtx_op operation 1");
-            } else if (operation < UMTX_OP_RESERVED1) {
-                error = GUEST_EOPNOTSUPP;
-            } else {
-                NotImplemented_nid_no_patch(("_umtx_op operation " + std::to_string(operation)).c_str());
-            }
+            error = GUEST_EOPNOTSUPP;
             break;
     }
     if (error == 0) {
