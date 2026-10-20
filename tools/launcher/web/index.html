@@ -3,241 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnyPS5 — Game Launcher & Translation Layer</title>
+    <title>PlayStation 5 Home — CryptPS5 Next-Gen UI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="app.css">
 </head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="16" cy="16" r="14" stroke="url(#cyan-grad)" stroke-width="2.5"/>
-                        <path d="M10 21L16 10L22 21H10Z" fill="url(#violet-grad)"/>
-                        <defs>
-                            <linearGradient id="cyan-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#00f0ff"/>
-                                <stop offset="1" stop-color="#7000ff"/>
-                            </linearGradient>
-                            <linearGradient id="violet-grad" x1="10" y1="10" x2="22" y2="21" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#00f0ff"/>
-                                <stop offset="1" stop-color="#a855f7"/>
-                            </linearGradient>
-                        </defs>
+<body class="ps5-body">
+    <!-- Cinematic Dynamic Ambient Background -->
+    <div class="ps5-backdrop" id="ps5-backdrop">
+        <div class="backdrop-image" id="backdrop-image"></div>
+        <div class="backdrop-gradient"></div>
+        <div class="backdrop-particles"></div>
+    </div>
+
+    <!-- Main PS5 Interface Container -->
+    <div class="ps5-home-container">
+        <!-- Top Navigation Bar -->
+        <header class="ps5-topbar">
+            <div class="topbar-left">
+                <div class="ps-logo">
+                    <svg viewBox="0 0 40 32" fill="currentColor">
+                        <path d="M14.6 2.1C13.7 2.6 13 3.5 13 4.6v19.7l6.2 2V2.8c0-.6-.3-1-.8-1.1-.3 0-.6.1-.8.4zM24 6.7v16.1l4.8-1.8V9.1c0-.7-.4-1.2-1-1.3-.4-.1-.8.1-1.1.4l-2.7 1.5zm-4.8 20.6l-5.6-1.8-6.8 2.5c-.8.3-1.4 1-1.4 1.8 0 1.2 1 2 2.2 2h.3l5.7-2.1v-2.4zm18.3 1.5l-8.6-3.1v2.5l5.9 2.1h.4c1.2 0 2.2-.8 2.2-2 0-.6-.3-1.2-.8-1.5h.9z"/>
                     </svg>
                 </div>
-                <div class="brand-text">
-                    <span class="brand-title">AnyPS5</span>
-                    <span class="brand-badge">FORK</span>
-                </div>
+                <nav class="ps5-tabs">
+                    <button class="tab-btn active" id="tab-games" data-sound="tick">Games</button>
+                    <button class="tab-btn" id="tab-media" data-sound="tick">Media</button>
+                    <button class="tab-btn" id="tab-system" data-sound="tick">System & Firmware</button>
+                </nav>
             </div>
 
-            <nav class="nav-links">
-                <button class="nav-item active" id="nav-library">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    <span>Library</span>
+            <div class="topbar-right">
+                <button class="icon-btn" id="btn-search" title="Search Games" data-sound="click">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 </button>
-                <button class="nav-item" id="nav-logs">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-                    <span>Diagnostics</span>
-                </button>
-                <button class="nav-item" id="nav-settings">
+                <button class="icon-btn" id="btn-open-settings" title="Emulator Settings" data-sound="click">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    <span>Settings</span>
                 </button>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="system-status">
-                    <span class="status-dot"></span>
-                    <span class="status-label">Native PE Engine</span>
+                <div class="user-profile" id="user-profile" title="Current Operator">
+                    <div class="avatar">
+                        <span>N</span>
+                        <span class="status-indicator online"></span>
+                    </div>
+                    <span class="username">Nhamstaff</span>
                 </div>
+                <div class="dualsense-status" title="DualSense 5 Connected (100%)">
+                    <svg width="22" height="16" viewBox="0 0 24 16" fill="currentColor"><path d="M7 2h10a5 5 0 0 1 5 5v5a2 2 0 0 1-2 2h-1a3 3 0 0 1-3-3v-1H8v1a3 3 0 0 1-3 3H4a2 2 0 0 1-2-2V7a5 5 0 0 1 5-5zm-1 4v2H4V6h2zm14 0v2h-2V6h2z"/></svg>
+                    <span class="battery-level">100%</span>
+                </div>
+                <div class="clock" id="live-clock">07:15 PM</div>
             </div>
-        </aside>
+        </header>
 
-        <!-- Main Content Surface -->
-        <main class="main-content">
-            <!-- Header bar -->
-            <header class="topbar">
-                <div class="search-box">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <input type="text" id="game-search" placeholder="Search installed games or title ID...">
-                </div>
-
-                <div class="header-actions">
-                    <button class="btn btn-secondary" id="btn-scan">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                        <span>Refresh</span>
-                    </button>
-                    <button class="btn btn-primary" id="btn-add-dir">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        <span>Add Game Folder</span>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Games Grid Section -->
-            <section class="content-section" id="section-library">
-                <div class="section-header">
-                    <h2>Game Library</h2>
-                    <span class="count-badge" id="game-count">0 Titles</span>
-                </div>
-
-                <div class="games-grid" id="games-grid">
-                    <!-- Populated dynamically via JS -->
-                </div>
-
-                <div class="empty-state" id="empty-state">
-                    <div class="empty-icon">🎮</div>
-                    <h3>No PS5 Games Found</h3>
-                    <p>Add a directory containing PS5 title folders with <code>eboot.bin</code> to get started.</p>
-                    <button class="btn btn-primary" id="btn-empty-add">Add Folder</button>
+        <!-- Main Dashboard Viewport -->
+        <main class="ps5-viewport">
+            <!-- Iconic Horizontal Game Ribbon -->
+            <section class="game-ribbon-container">
+                <div class="game-ribbon" id="game-ribbon">
+                    <!-- Cards will be populated by JS -->
                 </div>
             </section>
 
-            <!-- Diagnostics / Log Section -->
-            <section class="content-section hidden" id="section-logs">
-                <div class="section-header">
-                    <h2>Live Diagnostics & Logs</h2>
-                    <button class="btn btn-secondary btn-sm" id="btn-clear-logs">Clear</button>
-                </div>
-
-                <div class="log-viewer">
-                    <div class="log-terminal" id="log-terminal">
-                        <div class="log-line info">[System] AnyPS5 Translation Layer initialized.</div>
-                    </div>
-                </div>
-
-                <div class="crash-box hidden" id="crash-box">
-                    <div class="crash-header">
-                        <span class="crash-title">Last Crash Report (anyps5-crash.log)</span>
-                    </div>
-                    <pre class="crash-content" id="crash-content"></pre>
-                </div>
-            </section>
-
-            <!-- Settings Section -->
-            <section class="content-section hidden" id="section-settings">
-                <div class="section-header">
-                    <h2>Translation & Performance Configuration</h2>
-                </div>
-
-                <div class="settings-grid">
-                    <div class="settings-card">
-                        <h3>Windows PE Patcher Flags</h3>
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label for="opt-windows-gui">Windows GUI Subsystem (--windows-gui)</label>
-                                <span class="setting-desc">Hides console window, runs game in pure graphical application mode.</span>
-                            </div>
-                            <input type="checkbox" id="opt-windows-gui" class="toggle-switch" checked>
-                        </div>
-
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label for="opt-dynamic-base">Dynamic Base / ASLR (--windows-dynamic-base)</label>
-                                <span class="setting-desc">Enables address space layout randomization and Windows security mitigation.</span>
-                            </div>
-                            <input type="checkbox" id="opt-dynamic-base" class="toggle-switch" checked>
-                        </div>
-
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label for="opt-skip-sce">Skip SCE Modules (--skip-sce-module)</label>
-                                <span class="setting-desc">Skips relinking bundled guest PRX libraries when only eboot needs translation.</span>
-                            </div>
-                            <input type="checkbox" id="opt-skip-sce" class="toggle-switch">
-                        </div>
+            <!-- Active Title Hero Stage -->
+            <section class="hero-stage" id="hero-stage">
+                <div class="hero-content">
+                    <div class="hero-badge-row">
+                        <span class="platform-badge" id="hero-platform">PS5 NATIVE</span>
+                        <span class="feature-badge" id="hero-feature">RDNA2 · VULKAN SPIR-V</span>
+                        <span class="status-badge" id="hero-status">READY TO RELINK</span>
                     </div>
 
-                    <div class="settings-card">
-                        <h3>CPU & Performance Optimizations</h3>
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label for="opt-job-affinity">Pin Job Threads to E-Cores (APS5_JOB_AFFINITY=1)</label>
-                                <span class="setting-desc">Pins low-priority guest workers to efficiency cores on Intel hybrid CPUs.</span>
-                            </div>
-                            <input type="checkbox" id="opt-job-affinity" class="toggle-switch">
-                        </div>
+                    <h1 class="hero-title" id="hero-title">PlayStation 5 Explore</h1>
+                    <p class="hero-subtitle" id="hero-subtitle">CryptPS5 Clean-Room Binary Relinker & HLE Runtime Environment</p>
 
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label for="opt-affinity-mask">Job Affinity Mask</label>
-                                <span class="setting-desc">Hex bitmask selecting CPU cores for worker jobs (e.g. 0x0F).</span>
-                            </div>
-                            <input type="text" id="opt-affinity-mask" class="input-text" value="0x0F">
-                        </div>
-
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label for="opt-trace-audio">AudioOut2 Real-time Tracing</label>
-                                <span class="setting-desc">Outputs SDL queue buffers and mix levels to stderr.</span>
-                            </div>
-                            <input type="checkbox" id="opt-trace-audio" class="toggle-switch">
-                        </div>
+                    <div class="hero-actions">
+                        <button class="btn-ps5-primary" id="btn-launch-game" data-sound="chime">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            <span id="btn-launch-text">Play Game</span>
+                        </button>
+                        <button class="btn-ps5-secondary" id="btn-inspect-hle" data-sound="click">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
+                            <span>HLE & Memory</span>
+                        </button>
+                        <button class="btn-ps5-secondary" id="btn-inspect-firmware" data-sound="click">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <span>PUP Decryptor</span>
+                        </button>
                     </div>
 
-                    <div class="settings-card full-width">
-                        <h3>Shader Cache & Recompiler Performance</h3>
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label for="opt-enable-shader-cache">Enable Persistent Disk Shader Cache</label>
-                                <span class="setting-desc">Caches compiled SPIR-V/DirectX shaders on disk to eliminate in-game stutter.</span>
-                            </div>
-                            <input type="checkbox" id="opt-enable-shader-cache" class="toggle-switch" checked>
+                    <!-- Live Hardware / HLE Specs Bar -->
+                    <div class="specs-bar">
+                        <div class="spec-card">
+                            <span class="spec-label">Virtual Memory Simulator</span>
+                            <span class="spec-value" id="spec-vmem">16 KiB Pages · UMA Active</span>
                         </div>
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label for="opt-shader-cache-dir">Custom Shader Cache Directory (ANYPS5_SHADER_CACHE_DIR)</label>
-                                <span class="setting-desc">Leave empty to use default <code>shader_cache/</code> beside game executable.</span>
-                            </div>
-                            <input type="text" id="opt-shader-cache-dir" class="input-text wide" placeholder="e.g. C:\AnyPS5\ShaderCache">
+                        <div class="spec-card">
+                            <span class="spec-label">Physical Pool (DirectMemory)</span>
+                            <span class="spec-value" id="spec-uma">2,048 MiB Allocated</span>
                         </div>
-                    </div>
-
-                    <div class="settings-card full-width">
-                        <h3>Environment & Relinker Path</h3>
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label for="opt-relinker-path">Relinker Binary Path</label>
-                                <span class="setting-desc">Path to the compiled <code>anyps5.exe</code> translation binary.</span>
-                            </div>
-                            <input type="text" id="opt-relinker-path" class="input-text wide">
+                        <div class="spec-card">
+                            <span class="spec-label">ELF Relocation Engine</span>
+                            <span class="spec-value" id="spec-relinker">PC32 / RVA / GLOB_DAT OK</span>
                         </div>
-
-                        <div class="setting-item">
-                            <div class="setting-text">
-                                <label>Configured Game Directories</label>
-                                <div id="game-dirs-list" class="tag-list"></div>
-                            </div>
-                        </div>
-
-                        <div class="setting-actions">
-                            <button class="btn btn-primary" id="btn-save-settings">Save Settings</button>
+                        <div class="spec-card">
+                            <span class="spec-label">Firmware Container</span>
+                            <span class="spec-value" id="spec-pup">PS5UPDATE1.PUP (1.17 GiB)</span>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
+
+        <!-- PS5 Quick Menu / Control Center Dock -->
+        <footer class="ps5-control-center">
+            <div class="dock-container">
+                <button class="dock-item active" id="dock-home" title="Home" data-sound="tick">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                </button>
+                <button class="dock-item" id="dock-switcher" title="Game Switcher" data-sound="tick">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/></svg>
+                </button>
+                <button class="dock-item" id="dock-notifications" title="Notifications & Logs" data-sound="tick">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </button>
+                <button class="dock-item" id="dock-sound" title="Sound Control" data-sound="tick">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                </button>
+                <button class="dock-item" id="dock-accessories" title="Accessories / DualSense" data-sound="tick">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h10a5 5 0 0 1 5 5v5a2 2 0 0 1-2 2h-1a3 3 0 0 1-3-3v-1H8v1a3 3 0 0 1-3 3H4a2 2 0 0 1-2-2V7a5 5 0 0 1 5-5zm-1 4v2H4V6h2zm14 0v2h-2V6h2z"/></svg>
+                </button>
+                <button class="dock-item" id="dock-power" title="Power" data-sound="tick">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                </button>
+            </div>
+            <div class="hints-container">
+                <span class="hint-item"><kbd>◀</kbd> <kbd>▶</kbd> Navigate</span>
+                <span class="hint-item"><kbd>Enter</kbd> Select</span>
+                <span class="hint-item"><kbd>Esc</kbd> Back</span>
+            </div>
+        </footer>
     </div>
 
-    <!-- Quick Action Modal -->
-    <div class="modal hidden" id="game-modal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-dialog">
+    <!-- Modal 1: PUP Decryptor & Key Architecture Modal -->
+    <div class="ps5-modal" id="modal-firmware">
+        <div class="modal-card">
             <div class="modal-header">
-                <h3 id="modal-game-title">Game Title</h3>
-                <button class="modal-close" id="modal-close">&times;</button>
+                <h2>Sony PS5 PUP Decryptor & Analysis</h2>
+                <button class="modal-close-btn" id="btn-close-firmware">✕</button>
             </div>
-            <div class="modal-body" id="modal-game-body">
-                <!-- Info populated dynamically -->
+            <div class="modal-body">
+                <div class="pup-status-grid">
+                    <div class="pup-box">
+                        <h3>Outer SLB2 Container</h3>
+                        <p class="pup-meta">Target: <code>PS5UPDATE.PUP</code> (1.17 GiB)</p>
+                        <ul class="pup-details">
+                            <li>Header: <code>0x20</code> (32-byte standard format)</li>
+                            <li>Entries: 1 file (<code>PS5UPDATE1.PUP</code>)</li>
+                            <li>Carve time: <strong>1.84 seconds</strong> [OK]</li>
+                        </ul>
+                    </div>
+                    <div class="pup-box highlight">
+                        <h3>Inner Sony Container</h3>
+                        <p class="pup-meta">Magic: <code>0xEEF51454</code> (Sony Encrypted PUP)</p>
+                        <ul class="pup-details">
+                            <li>Entropy: <strong>8.00 bits/byte</strong> [AES-CBC Encrypted]</li>
+                            <li>Partitions: <code>system.img</code>, <code>kernel.elf</code>, <code>secure3.elf</code></li>
+                            <li>Descriptor Table: 64-byte aligned blocks</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="key-research-notice">
+                    <h4>🔒 Research Key Explanation</h4>
+                    <p>Sony's master retail update decryption keys are fused directly into the <strong>AMD Secure Asset Management Unit (SAMU / PSP)</strong> hardware. They are never published openly on the web.</p>
+                    <p>Community research tools (like <code>zecoxao/ps5-pup-decrypt</code>) execute on jailbroken consoles to request the hardware SAMU to decrypt update blobs into raw partitions. On PC, place dumped keys into <code>keys.txt</code> to unlock partitions directly.</p>
+                </div>
             </div>
-            <div class="modal-footer" id="modal-game-footer">
-                <!-- Action buttons -->
+            <div class="modal-footer">
+                <button class="btn-ps5-secondary" id="btn-run-ps5decrypt">Run ps5decrypt --scan</button>
+                <button class="btn-ps5-primary" id="btn-close-firmware-ok">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: HLE Diagnostics & Memory Monitor Modal -->
+    <div class="ps5-modal" id="modal-hle">
+        <div class="modal-card large">
+            <div class="modal-header">
+                <h2>HLE Environment & Relinker Monitor</h2>
+                <button class="modal-close-btn" id="btn-close-hle">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="hle-stats-row">
+                    <div class="hle-stat-tile">
+                        <span class="stat-number">16 KiB</span>
+                        <span class="stat-desc">PS5 Page Granularity</span>
+                    </div>
+                    <div class="hle-stat-tile">
+                        <span class="stat-number">2,048 MiB</span>
+                        <span class="stat-desc">Unified DirectMemory Pool</span>
+                    </div>
+                    <div class="hle-stat-tile">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-desc">x86-64 Relocation Pass Rate</span>
+                    </div>
+                    <div class="hle-stat-tile">
+                        <span class="stat-number">0 Errors</span>
+                        <span class="stat-desc">Verification Suite Status</span>
+                    </div>
+                </div>
+
+                <div class="terminal-box">
+                    <div class="terminal-bar">
+                        <span>HLE Live Diagnostics</span>
+                        <button class="btn-tiny" id="btn-clear-term">Clear</button>
+                    </div>
+                    <pre class="terminal-output" id="hle-term-output">[*] CryptPS5 Clean-room HLE Engine active.
+[+] VirtualMemorySimulator: Allocated 64 KiB page at 0x178e9180000 (tag: game_primary_heap)
+[+] DirectMemory: Allocated 128 KiB physical pool at 0x80000000 (UMA architecture)
+[+] Relinker: Resolved sceKernelExit -> 0x401000
+[+] Relinker: Applied R_X86_64_64, R_X86_64_32, and R_X86_64_PC32 relocations successfully.</pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-ps5-secondary" id="btn-run-hle-tests">Run Full HLE Verification</button>
+                <button class="btn-ps5-primary" id="btn-close-hle-ok">Close</button>
             </div>
         </div>
     </div>
