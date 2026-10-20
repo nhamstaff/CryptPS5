@@ -1,8 +1,10 @@
 # CryptPS5
 
 > **High-Performance Clean-Room High-Level Emulation (HLE), Symbol Relocation Mapper & Static Binary Synthesis Engine**
+> *Built upon and extending the foundational architecture of [AnyPS5](https://github.com/boykopovar/AnyPS5) by boykopovar.*
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](LICENSE)
+[![Upstream: AnyPS5](https://img.shields.io/badge/Upstream-AnyPS5%20by%20boykopovar-orange.svg)](https://github.com/boykopovar/AnyPS5)
 [![C++ Standard](https://img.shields.io/badge/C%2B%2B-20-purple.svg)](https://en.cppreference.com/w/cpp/20)
 [![Target Platforms](https://img.shields.io/badge/Platform-Windows%20PE%20%7C%20Linux%20SysV-brightgreen.svg)]()
 [![Clean Room Status](https://img.shields.io/badge/Compliance-100%25%20Clean%20Room-success.svg)]()
@@ -180,8 +182,16 @@ Relink unencrypted development ELFs directly to native host executables:
 
 ---
 
-## 7. License & Disclaimer
+## 7. Acknowledgements & Upstream Attribution
 
-This project is licensed under the **GNU General Public License version 2 (GPL-2.0)**. See [LICENSE](LICENSE) for details.
+CryptPS5 is built upon and inspired by the ground-breaking architecture of **[AnyPS5](https://github.com/boykopovar/AnyPS5)** developed by **[boykopovar](https://github.com/boykopovar)** and contributors. 
+
+We express deep respect and gratitude to the AnyPS5 team for establishing the core static relinker, RDNA-to-SPIR-V recompiler, and initial PRX system library foundations. CryptPS5 extends this base with dedicated nested container analysis, streaming partition extraction, and clean-room HLE verification modules.
+
+---
+
+## 8. License & Disclaimer
+
+This project is licensed under the **GNU General Public License version 2 (GPL-2.0)** in compliance with upstream licensing. See [LICENSE](LICENSE) for details.
 
 *PlayStation, PS5, and DualSense are registered trademarks of Sony Interactive Entertainment Inc. CryptPS5 is an independent open-source research initiative and is neither affiliated with nor endorsed by Sony.*
