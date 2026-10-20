@@ -39,6 +39,16 @@ struct VirtualPageBlock {
     uint32_t    flags;
     std::string tag_name;
     bool        is_committed;
+    bool        is_direct_mapped;
+    uint64_t    phys_address_mapped;
+};
+
+struct DirectMemoryBlock {
+    uint64_t    phys_address;
+    size_t      size;
+    std::string tag_name;
+    bool        is_allocated;
+    void*       host_backing;
 };
 
 class VirtualMemorySimulator {
@@ -49,7 +59,7 @@ public:
     int AllocateVirtual(void** out_addr, size_t length, uint32_t prot, uint32_t flags, size_t alignment = PAGE_SIZE_16K, const std::string& name = "");
 
     // Release / unmap virtual address space
-    int FreeVirtual(void* addr, size_t length);
+    int FreeVirtual(void* addr, size_t length = 0);
 
     // Modify protection on page range
     int ProtectVirtual(const void* addr, size_t length, uint32_t new_prot);
@@ -57,13 +67,21 @@ public:
     // Query virtual page state
     bool QueryVirtual(const void* addr, VirtualPageBlock* out_info);
 
+    // Direct physical memory allocation pool simulation (PS5 UMA architecture)
+    int AllocateDirectMemory(size_t length, size_t alignment, uint64_t* out_phys_addr, const std::string& name = "");
+    int MapDirectMemory(void** out_addr, size_t length, uint32_t prot, uint64_t phys_addr, size_t alignment = PAGE_SIZE_16K);
+    int ReleaseDirectMemory(uint64_t phys_addr, size_t length = 0);
+
     // Total active allocated bytes
     size_t GetTotalCommittedBytes();
+    size_t GetTotalDirectMemoryBytes();
 
 private:
     VirtualMemorySimulator() = default;
     std::mutex mutex_;
     std::map<uintptr_t, VirtualPageBlock> active_blocks_;
+    std::map<uint64_t, DirectMemoryBlock> active_direct_blocks_;
+    uint64_t next_phys_addr_ = 0x80000000; // Physical pool starts at 2 GiB pseudo-base
 
     static size_t AlignUp(size_t val, size_t align) {
         return (val + align - 1) & ~(align - 1);

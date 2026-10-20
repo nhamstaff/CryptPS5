@@ -121,31 +121,74 @@ size_t ElfSymbolResolver::ApplyRelocations(
     size_t applied_count = 0;
 
     for (const auto& rel : relocations) {
-        if (rel.offset < load_base) continue;
-        uint64_t patch_offset = rel.offset - load_base;
-        if (patch_offset + sizeof(uint64_t) > image_size) continue;
+        uint64_t patch_offset = 0;
+        if (rel.offset >= load_base && load_base > 0) {
+            patch_offset = rel.offset - load_base;
+        } else {
+            patch_offset = rel.offset;
+        }
 
         uint64_t sym_val = 0;
         if (rel.symbol_index < symbols.size()) {
             sym_val = symbols[rel.symbol_index].value;
         }
 
-        uint64_t* target = reinterpret_cast<uint64_t*>(mapped_image + patch_offset);
-
         switch (rel.type) {
             case R_X86_64_64:
-                *target = sym_val + rel.addend;
-                applied_count++;
+                if (patch_offset + sizeof(uint64_t) <= image_size) {
+                    *reinterpret_cast<uint64_t*>(mapped_image + patch_offset) = sym_val + rel.addend;
+                    applied_count++;
+                }
                 break;
+
             case R_X86_64_RELATIVE:
-                *target = load_base + rel.addend;
-                applied_count++;
+                if (patch_offset + sizeof(uint64_t) <= image_size) {
+                    *reinterpret_cast<uint64_t*>(mapped_image + patch_offset) = load_base + rel.addend;
+                    applied_count++;
+                }
                 break;
+
             case R_X86_64_GLOB_DAT:
             case R_X86_64_JUMP_SLOT:
-                *target = sym_val;
-                applied_count++;
+                if (patch_offset + sizeof(uint64_t) <= image_size) {
+                    *reinterpret_cast<uint64_t*>(mapped_image + patch_offset) = sym_val + rel.addend;
+                    applied_count++;
+                }
                 break;
+
+            case R_X86_64_PC32:
+                if (patch_offset + sizeof(uint32_t) <= image_size) {
+                    uint64_t final_target_va = sym_val + rel.addend;
+                    uint64_t current_pc = load_base + patch_offset;
+                    int64_t pc_disp = static_cast<int64_t>(final_target_va - current_pc);
+                    *reinterpret_cast<int32_t*>(mapped_image + patch_offset) = static_cast<int32_t>(pc_disp);
+                    applied_count++;
+                }
+                break;
+
+            case R_X86_64_32:
+                if (patch_offset + sizeof(uint32_t) <= image_size) {
+                    *reinterpret_cast<uint32_t*>(mapped_image + patch_offset) = static_cast<uint32_t>(sym_val + rel.addend);
+                    applied_count++;
+                }
+                break;
+
+            case R_X86_64_32S:
+                if (patch_offset + sizeof(int32_t) <= image_size) {
+                    *reinterpret_cast<int32_t*>(mapped_image + patch_offset) = static_cast<int32_t>(sym_val + rel.addend);
+                    applied_count++;
+                }
+                break;
+
+            case R_X86_64_DTPMOD64:
+            case R_X86_64_DTPOFF64:
+            case R_X86_64_TPOFF64:
+                if (patch_offset + sizeof(uint64_t) <= image_size) {
+                    *reinterpret_cast<uint64_t*>(mapped_image + patch_offset) = sym_val + rel.addend;
+                    applied_count++;
+                }
+                break;
+
             default:
                 break;
         }

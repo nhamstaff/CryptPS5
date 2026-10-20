@@ -53,7 +53,35 @@ int main() {
         std::cerr << "[-] Virtual memory free failed!\n";
         return 4;
     }
-    std::cout << "    [+] Virtual memory cleanly released.\n\n";
+    std::cout << "    [+] Virtual memory cleanly released.\n";
+
+    // ── Direct Memory Physical Allocation Simulation (PS5 UMA) ──
+    std::cout << "\n    [*] Testing Direct Memory (UMA physical pool)...\n";
+    uint64_t phys_addr = 0;
+    int dir_alloc = vmem.AllocateDirectMemory(128 * 1024, LibkernelSim::PAGE_SIZE_16K, &phys_addr, "gpu_ring_buffer");
+    if (dir_alloc != 0 || phys_addr == 0) {
+        std::cerr << "[-] Direct memory allocate failed!\n";
+        return 5;
+    }
+    std::cout << "    [+] Direct physical pool allocated 128 KiB at phys: 0x" << std::hex << phys_addr << std::dec << "\n";
+
+    void* dir_vmap = nullptr;
+    int dir_map = vmem.MapDirectMemory(&dir_vmap, 128 * 1024,
+                                       LibkernelSim::PROT_READ_SIM | LibkernelSim::PROT_WRITE_SIM,
+                                       phys_addr);
+    if (dir_map != 0 || !dir_vmap) {
+        std::cerr << "[-] Direct memory virtual map failed!\n";
+        return 6;
+    }
+    std::cout << "    [+] Direct memory mapped into virtual space at: " << dir_vmap << "\n";
+
+    // Test write and read through mapped direct memory
+    std::memset(dir_vmap, 0xAA, 128 * 1024);
+    assert(static_cast<uint8_t*>(dir_vmap)[0] == 0xAA);
+
+    vmem.FreeVirtual(dir_vmap);
+    vmem.ReleaseDirectMemory(phys_addr);
+    std::cout << "    [+] Direct memory unmapped and released cleanly.\n\n";
 
     // ── Test 2: ELF Symbol & Relocation Mapping ──
     std::cout << "[2] Testing ElfSymbolResolver...\n";
@@ -108,17 +136,24 @@ int main() {
     // Test relocation application
     std::vector<uint8_t> target_image(1024, 0);
     std::vector<Relinker::ParsedElfRelocation> relocs = {
-        { 0x100, 1, Relinker::R_X86_64_64, 0x20 } // offset 0x100, sym 1, addend 0x20
+        { 0x100, 1, Relinker::R_X86_64_64,   0x20 }, // 64-bit absolute: 0x401000 + 0x20
+        { 0x200, 1, Relinker::R_X86_64_32,   0x10 }, // 32-bit absolute: 0x401000 + 0x10
+        { 0x300, 1, Relinker::R_X86_64_PC32, -4   }  // 32-bit PC-relative displacement
     };
     size_t applied = Relinker::ElfSymbolResolver::ApplyRelocations(
-        target_image.data(), target_image.size(), 0x0, relocs, parsed_syms);
+        target_image.data(), target_image.size(), 0x400000, relocs, parsed_syms);
 
-    uint64_t patched_val = *reinterpret_cast<uint64_t*>(target_image.data() + 0x100);
-    if (applied != 1 || patched_val != (0x401000 + 0x20)) {
+    uint64_t patched_64 = *reinterpret_cast<uint64_t*>(target_image.data() + 0x100);
+    uint32_t patched_32 = *reinterpret_cast<uint32_t*>(target_image.data() + 0x200);
+    int32_t  patched_pc = *reinterpret_cast<int32_t*>(target_image.data() + 0x300);
+
+    if (applied != 3 || patched_64 != (0x401000 + 0x20) || patched_32 != (0x401000 + 0x10)) {
         std::cerr << "[-] Relocation application mismatch!\n";
-        return 6;
+        return 7;
     }
-    std::cout << "    [+] Relocation applied at offset 0x100: 0x" << std::hex << patched_val << std::dec << "\n\n";
+    std::cout << "    [+] R_X86_64_64 applied at 0x100: 0x" << std::hex << patched_64 << "\n"
+              << "    [+] R_X86_64_32 applied at 0x200: 0x" << patched_32 << "\n"
+              << "    [+] R_X86_64_PC32 disp at 0x300: 0x" << patched_pc << std::dec << "\n\n";
 
     std::cout << "[+] All HLE environment simulation components verified successfully!\n";
     return 0;

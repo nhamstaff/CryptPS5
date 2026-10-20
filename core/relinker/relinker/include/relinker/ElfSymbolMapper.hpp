@@ -68,10 +68,16 @@ struct RawElf64_Rela {
 // Standard Relocation Types for x86-64
 static constexpr uint32_t R_X86_64_NONE      = 0;
 static constexpr uint32_t R_X86_64_64        = 1;
+static constexpr uint32_t R_X86_64_PC32      = 2;
 static constexpr uint32_t R_X86_64_COPY      = 5;
 static constexpr uint32_t R_X86_64_GLOB_DAT  = 6;
 static constexpr uint32_t R_X86_64_JUMP_SLOT = 7;
 static constexpr uint32_t R_X86_64_RELATIVE  = 8;
+static constexpr uint32_t R_X86_64_32        = 10;
+static constexpr uint32_t R_X86_64_32S       = 11;
+static constexpr uint32_t R_X86_64_DTPMOD64  = 16;
+static constexpr uint32_t R_X86_64_DTPOFF64  = 17;
+static constexpr uint32_t R_X86_64_TPOFF64   = 18;
 
 struct ParsedElfSymbol {
     std::string name;
