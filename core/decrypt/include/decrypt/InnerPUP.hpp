@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <cmath>
 #include <decrypt/Crypto.hpp>
 
 namespace Decrypt {
