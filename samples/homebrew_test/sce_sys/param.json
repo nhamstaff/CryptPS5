@@ -1,0 +1,12 @@
+{
+  "titleId": "CUSA00001",
+  "titleName": "CryptPS5 Native Homebrew",
+  "category": "gd",
+  "contentVersion": "01.00",
+  "applicationVersion": "01.00",
+  "localizedParameters": {
+    "defaultLanguage": {
+      "titleName": "CryptPS5 Native Homebrew"
+    }
+  }
+}

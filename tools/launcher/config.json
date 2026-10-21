@@ -1,0 +1,14 @@
+{
+  "relinkerPath": "D:\\projects\\ReveseEngineeringProject\\relinker.exe",
+  "gameDirs": [
+    "D:\\projects\\ReveseEngineeringProject\\samples"
+  ],
+  "windowsGui": true,
+  "windowsDynamicBase": true,
+  "skipSceModule": true,
+  "jobAffinity": false,
+  "jobAffinityMask": "0x0F",
+  "traceAudio": false,
+  "enableShaderCache": true,
+  "shaderCacheDir": ""
+}

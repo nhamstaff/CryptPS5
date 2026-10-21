@@ -48,6 +48,7 @@ bin/
 *.exe
 *.out
 *.bin
+!samples/**/eboot.bin
 *.elf
 *.self
 *.prx
